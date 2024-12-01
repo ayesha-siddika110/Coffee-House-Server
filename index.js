@@ -33,6 +33,8 @@ async function run() {
     const database = client.db("coffeehouseDB");
     const coffeescollections = database.collection("coffeescollections");
 
+    const usersCollections = client.db('usersdb').collection('usersCollection')
+
     app.get('/coffess', async(req,res)=>{
         const cursor = coffeescollections.find();
         const result = await cursor.toArray();
@@ -70,6 +72,34 @@ async function run() {
         const result = await coffeescollections.deleteOne(query)
         res.send(result)
 
+    })
+
+    app.get('/users', async(req,res)=>{
+      const cursor = usersCollections.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+    app.get('/users/:id', async(req,res)=>{
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await usersCollections.findOne(query)
+      res.send(result)
+    })
+
+    app.post('/users',async(req,res)=>{
+      const newUser = req.body;
+      console.log('creating new user', newUser);
+      const result = await usersCollections.insertOne(newUser);
+      res.send(result)
+      
+    })
+
+    app.delete('/users/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await usersCollections.deleteOne(query)
+      res.send(result)
     })
 
     
